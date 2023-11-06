@@ -36,6 +36,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!--        前端模板-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
