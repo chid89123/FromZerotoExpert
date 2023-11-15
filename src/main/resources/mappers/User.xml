@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wang.fromzerotoexpert.dao.UserDao">
+    <insert id="addUser" parameterType="com.wang.fromzerotoexpert.domain.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username, password, email) values (#{username}, #{password}, #{email})
+    </insert>
+
+    <select id="getUserByUsername" parameterType="java.lang.String" resultType="com.wang.fromzerotoexpert.domain.User">
+        select * from user where username = #{username}
+    </select>
+
+
+    <!--    <select id="getRoleByCode" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.auth.AuthRole">-->
+<!--        select * from t_auth_role where code = #{code}-->
+<!--    </select>-->
+</mapper>

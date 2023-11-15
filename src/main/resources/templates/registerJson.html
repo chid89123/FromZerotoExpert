@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form to JSON</title>
+</head>
+<body>
+
+<form id="myForm" action="/userRegisterJson" method="post" onsubmit="submitForm(event)">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required>
+
+  <br>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required>
+
+  <br>
+
+  <label for="email">email:</label>
+  <input type="email" id="email" name="email" required>
+
+  <br>
+
+  <button type="submit">Submit</button>
+</form>
+
+<div id="result">里在干什莫</div>
+
+<script>
+  function submitForm(event) {
+    event.preventDefault(); // 阻止默认的表单提交
+
+    // 获取表单元素
+    var form = document.getElementById("myForm");
+
+    // 使用 FormData 对象获取表单数据
+    var formData = new FormData(form);
+
+    // 构建 JSON 对象
+    var jsonData = {};
+    formData.forEach(function(value, key){
+      jsonData[key] = value;
+    });
+
+    // 将 JSON 对象转换为 JSON 字符串
+    var jsonString = JSON.stringify(jsonData);
+
+    // 使用 fetch 发送 POST 请求
+    fetch(form.action, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: jsonString
+    })
+            .then(response => response.json())
+            .then(data => {
+              // 处理服务器响应
+              document.getElementById("result").innerText = "User added successfully!";
+            })
+            .catch(error => {
+              alert("User Add fail")
+            });
+  }
+</script>
+
+</body>
+</html>

@@ -4,7 +4,15 @@
     <title>fromZeroToExpert</title>
 </head>
 <body>
+<h1>
+    <#if msg??>
+        ${msg}
+    <#else>
+        msg为空
+    </#if>
 
-    <h1>${msg}</h1>
+</h1>
+
+
 </body>
 </html>
