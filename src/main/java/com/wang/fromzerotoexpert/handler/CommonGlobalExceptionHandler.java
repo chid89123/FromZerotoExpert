@@ -1,6 +1,5 @@
 package com.wang.fromzerotoexpert.handler;
 
-import com.wang.fromzerotoexpert.domain.ConditionException;
 import com.wang.fromzerotoexpert.domain.JsonResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

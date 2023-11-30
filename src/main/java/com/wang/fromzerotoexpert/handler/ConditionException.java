@@ -1,4 +1,4 @@
-package com.wang.fromzerotoexpert.domain;
+package com.wang.fromzerotoexpert.handler;
 
 public class ConditionException extends Exception{
     private static final long serialVersionUID = 1L;

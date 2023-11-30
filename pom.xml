@@ -67,6 +67,20 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
+<!--        jwt token-->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.18.2</version>
+        </dependency>
+
+        <!--加解密工具-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.14</version>
+        </dependency>
+
     </dependencies>
 
     <build>

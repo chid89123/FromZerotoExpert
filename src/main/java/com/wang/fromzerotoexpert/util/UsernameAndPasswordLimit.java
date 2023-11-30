@@ -1,7 +1,10 @@
 package com.wang.fromzerotoexpert.util;
 
+import com.wang.fromzerotoexpert.dao.DisallowWordDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,16 +13,28 @@ import java.util.regex.Pattern;
 
 @Component
 public class UsernameAndPasswordLimit {
+    @Autowired
+    private DisallowWordDao disallowWordDao;
 
-    private static TrieNode root;
+    private TrieNode root;
 
-    static {
+//    static {
+//        root = new TrieNode();
+//        List<String> impolitePhrases = new ArrayList(Arrays.asList("傻逼", "草泥马","草"));
+//        for (String s: impolitePhrases) {
+//            root.insert(s);
+//        }
+//    }
+
+    @PostConstruct //该代码将在项目启动时执行一次
+    public void init() {
         root = new TrieNode();
-        List<String> impolitePhrases = new ArrayList(Arrays.asList("傻逼", "草泥马","草"));
-        for (String s: impolitePhrases) {
+        List<String> all = disallowWordDao.getAll();
+        for (String s : all) {
             root.insert(s);
         }
     }
+
 
     public int limitUsername(String username) {
         if (root.check(username)) {

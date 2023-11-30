@@ -22,7 +22,7 @@ public class WelcomeController {
         Cookie cookie = new Cookie("firstLogin", "1");
         cookie.setPath("/index.ftl");
         cookie.setMaxAge(60 * 60 * 24);
-
+        boolean flag = false;
 
         if (cookies == null) {
 //            System.out.println("初次来到");
@@ -33,8 +33,14 @@ public class WelcomeController {
             for (Cookie cookie1 : cookies) {
                 if (cookie1.getName().equals("firstLogin")) {
                     modelAndView.addObject("msg", "嗨，欢迎您再次来到 from zero to expert.");
+                    flag = true;
                 }
             }
+            if (!flag) {
+                response.addCookie(cookie);
+                modelAndView.addObject("msg", "嗨，欢迎您来到 from zero to expert.");
+            }
+
 
         }
 
