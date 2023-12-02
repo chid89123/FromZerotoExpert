@@ -8,6 +8,7 @@ import com.wang.fromzerotoexpert.domain.User;
 import com.wang.fromzerotoexpert.util.MD5Util;
 import com.wang.fromzerotoexpert.util.TokenUtil;
 import com.wang.fromzerotoexpert.util.UsernameAndPasswordLimit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -212,33 +214,61 @@ public class UserService {
     public User loginOnlyOne(UserLoginForm userLoginForm, HttpServletRequest request) throws ConditionException {
         User user = login2(userLoginForm);
         HttpSession session = request.getSession();
-        String id = session.getId();
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(id))) {
+        String sessionId = session.getId();
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(sessionId))) {
             throw new ConditionException("该用户已经登录");
         }
-        redisTemplate.opsForValue().set(id, user.getUsername());
-        redisTemplate.expire(id, 100000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(sessionId, user.getUsername());
+        redisTemplate.expire(sessionId, 100000, TimeUnit.MILLISECONDS);
 
         session.setAttribute("currentUser", user);
         user.setPassword("");
         return user;
     }
 
-    public User loginLimit(UserLoginForm userLoginForm, HttpServletRequest request) throws ConditionException {
-        User user = login2(userLoginForm);
-        HttpSession session = request.getSession();
-        String id = session.getId();
+    public String loginLimit(UserLoginForm userLoginForm, HttpServletRequest request) throws Exception {
+        String username = userLoginForm.getUsername();
+        String rawPassword = userLoginForm.getPassword();
 
-        String header = request.getHeader("User-Agent");
+        if (StringUtils.isNullOrEmpty(username)) {
+            throw new ConditionException("用户名不能为空");
+        }
+        User dbUser = userDao.getUserByUsername(username);
+        if (dbUser == null) {
+            throw new ConditionException("该用户不存在");
+        }
+        String salt = dbUser.getSalt();
+        String dbmd5Password = dbUser.getPassword();
 
-//        if (Boolean.TRUE.equals(redisTemplate.hasKey(id))) {
-//            throw new ConditionException("该用户已经登录");
-//        }
-//        redisTemplate.opsForValue().set(id, user.getUsername());
-//        redisTemplate.expire(id, 100000, TimeUnit.MILLISECONDS);
-//
-//        session.setAttribute("currentUser", user);
-//        user.setPassword("");
-        return user;
+        String md5Password = MD5Util.generateMD5Password(rawPassword, salt);
+        if (!md5Password.equals(dbmd5Password)) {
+            throw new ConditionException("密码错误");
+        }
+        Long userId = dbUser.getId();
+
+        String userAgent = request.getHeader("User-Agent");
+
+
+        if (userAgent.toLowerCase().contains("mobile")) { //移动端访问
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(userId + "mobileToken"))) { // 移动端已经登录
+                throw new ConditionException("移动端已经登录");
+            }
+            else {
+                //说明移动端还没有登录
+                redisTemplate.opsForValue().set(userId + "mobileToken", String.valueOf(1));
+                redisTemplate.expire(userId + "mobileToken", 12, TimeUnit.HOURS);
+            }
+        } else {// PC端访问
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(userId + "pcToken"))) { // PC端已经登录
+                throw new ConditionException("电脑端已经登录");
+            }
+            else {
+                //说明pc端还没有登录
+                redisTemplate.opsForValue().set(userId + "pcToken", String.valueOf(1));
+                redisTemplate.expire(userId + "pcToken", 12, TimeUnit.HOURS);
+            }
+        }
+
+        return TokenUtil.generateToken(userId);
     }
 }

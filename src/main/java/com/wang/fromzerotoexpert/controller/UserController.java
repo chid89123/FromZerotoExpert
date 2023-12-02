@@ -46,9 +46,9 @@ public class UserController {
     }
 
     @PostMapping("/loginLimit")
-    public JsonResponse<User> loginLimit(UserLoginForm userLoginForm,
+    public JsonResponse<String> loginLimit(UserLoginForm userLoginForm,
                                          HttpServletRequest request) throws Exception {
-        User user = userService.loginLimit(userLoginForm, request);
-        return new JsonResponse<>(user);
+        String token = userService.loginLimit(userLoginForm, request);
+        return new JsonResponse<>(token);
     }
 }

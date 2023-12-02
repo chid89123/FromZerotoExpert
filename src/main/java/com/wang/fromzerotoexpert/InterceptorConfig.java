@@ -11,7 +11,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new UserLoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/loginOnlyOne");
+                .excludePathPatterns("/**");
     }
 //    @Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
