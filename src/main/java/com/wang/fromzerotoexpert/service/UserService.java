@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -258,6 +259,7 @@ public class UserService {
                 redisTemplate.opsForValue().set(userId + "mobileToken", String.valueOf(1));
                 redisTemplate.expire(userId + "mobileToken", 12, TimeUnit.HOURS);
             }
+
         } else {// PC端访问
             if (Boolean.TRUE.equals(redisTemplate.hasKey(userId + "pcToken"))) { // PC端已经登录
                 throw new ConditionException("电脑端已经登录");
@@ -267,8 +269,26 @@ public class UserService {
                 redisTemplate.opsForValue().set(userId + "pcToken", String.valueOf(1));
                 redisTemplate.expire(userId + "pcToken", 12, TimeUnit.HOURS);
             }
+
         }
 
         return TokenUtil.generateToken(userId);
+    }
+
+    public Integer getOnlineUser() {
+        long currentTimestamp = System.currentTimeMillis(); // 获取当前时间戳
+        long threeSecondsAgoTimestamp = currentTimestamp - 1000000; //  这里是一千秒
+
+
+        Set<String> range = redisTemplate.opsForZSet().rangeByScore("ol", threeSecondsAgoTimestamp, currentTimestamp);
+//        for (String s : range) {
+//            System.out.println(s);
+//        }
+        return range.size();
+    }
+
+    public void onlineUser(Long userId) {
+        long timestamp = System.currentTimeMillis();
+        redisTemplate.opsForZSet().add("ol", String.valueOf(userId), timestamp);
     }
 }
