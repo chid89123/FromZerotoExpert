@@ -13,6 +13,11 @@
 
 </h1>
 
+<br>
+<h3>今日访问量： pv:${pv} ip:${ip} uv:${uv}</h3>
+<br>
+<h3>昨日访问量： pv:${yesterdayPv} ip:${yesterdayIp} uv:${yesterdayUv}</h3>
+
 
 </body>
 </html>

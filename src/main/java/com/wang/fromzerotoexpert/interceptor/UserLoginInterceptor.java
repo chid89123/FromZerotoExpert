@@ -1,4 +1,4 @@
-package com.wang.fromzerotoexpert;
+package com.wang.fromzerotoexpert.interceptor;
 
 import com.wang.fromzerotoexpert.domain.User;
 import com.wang.fromzerotoexpert.handler.ConditionException;

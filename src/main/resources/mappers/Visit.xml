@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.wang.fromzerotoexpert.dao.VisitDao">
+
+
+
+
+    <!--    <select id="getRoleByCode" parameterType="java.lang.String" resultType="com.imooc.bilibili.domain.auth.AuthRole">-->
+<!--        select * from t_auth_role where code = #{code}-->
+<!--    </select>-->
+    <insert id="addVisit" parameterType="com.wang.fromzerotoexpert.domain.Visit" useGeneratedKeys="true" keyProperty="id">
+        insert into visit(pv, ip, uv, date) values (#{pv}, #{ip}, #{uv}, #{date})
+    </insert>
+    <select id="getYesterdayVisit" parameterType="java.lang.String" resultType="com.wang.fromzerotoexpert.domain.Visit">
+        select * from visit where date = #{yesterdayDate}
+    </select>
+</mapper>

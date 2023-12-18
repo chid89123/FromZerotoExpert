@@ -1,5 +1,7 @@
 package com.wang.fromzerotoexpert.controller;
 
+import com.wang.fromzerotoexpert.service.WelcomeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
@@ -10,17 +12,20 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @Controller
 public class WelcomeController {
+    @Autowired
+    private WelcomeService welcomeService;
 
-    @GetMapping("/index.ftl")
+    @GetMapping("/index")
     public ModelAndView welcome(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView("index");
         Cookie[] cookies = request.getCookies();
 
         Cookie cookie = new Cookie("firstLogin", "1");
-        cookie.setPath("/index.ftl");
+        cookie.setPath("/index");
         cookie.setMaxAge(60 * 60 * 24);
         boolean flag = false;
 
@@ -40,10 +45,21 @@ public class WelcomeController {
                 response.addCookie(cookie);
                 modelAndView.addObject("msg", "嗨，欢迎您来到 from zero to expert.");
             }
-
-
         }
+
+
+        Map<String, Integer> todayMap = welcomeService.getTodayPVAndIPAndUV();
+        Map<String, Integer> yesterdayMap = welcomeService.getYesterdayPVAndIPAndUV();
+
+        modelAndView.addObject("pv", todayMap.get("pv"));
+        modelAndView.addObject("ip", todayMap.get("ip"));
+        modelAndView.addObject("uv", todayMap.get("uv"));
+
+        modelAndView.addObject("yesterdayPv", yesterdayMap.get("pv"));
+        modelAndView.addObject("yesterdayIp", yesterdayMap.get("ip"));
+        modelAndView.addObject("yesterdayUv", yesterdayMap.get("uv"));
 
         return modelAndView;
     }
+
 }
