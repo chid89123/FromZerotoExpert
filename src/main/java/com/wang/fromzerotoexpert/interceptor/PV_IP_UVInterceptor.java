@@ -33,7 +33,7 @@ public class PV_IP_UVInterceptor implements HandlerInterceptor {
             Long userId = userSupport.getCurrentUserId();
             redisTemplate.opsForHyperLogLog().add("UV" + nowTime, String.valueOf(userId));
         } catch (ConditionException e) {
-            System.out.println("用户未登录,无法统计UV");
+            //System.out.println("用户未登录,无法统计UV");
 
         }
         return true;
